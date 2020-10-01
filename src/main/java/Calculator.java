@@ -13,7 +13,7 @@ public class Calculator {
 
     private static double step = 0.1;
 
-    private static ScriptEngine calculator = new ScriptEngineManager().getEngineByName("javascript");
+    private static final ScriptEngine calculator = new ScriptEngineManager().getEngineByName("javascript");
     private static final Logger logger = LoggerFactory.getLogger(Calculator.class);
 
     private static String valX = "x";
@@ -27,11 +27,11 @@ public class Calculator {
         prepareCalculator();
     }
 
-    public Calculator(ScriptEngine calc) {
-
-        this();
-        calculator = calc;
-    }
+//    public Calculator(ScriptEngine calc) {
+//
+//        this();
+//        calculator = calc;
+//    }
 
     public static double calculate(String function, double x) throws ScriptException {
 
@@ -76,7 +76,7 @@ public class Calculator {
 
     public Map<Double, Double> calculate2D(double begin, double end, double minY, double maxY, String function) throws ScriptException { return calculate(function, begin, end, minY, maxY); }
 
-    public Map<Double, Double>[] calculate3D(double begin, double end, double minY, double maxY, double minZ, double maxZ, String functionY, String functionZ) throws ScriptException {
+    public Map[] calculate3D(double begin, double end, double minY, double maxY, double minZ, double maxZ, String functionY, String functionZ) throws ScriptException {
 
         return new Map[]{ calculate(functionY, begin, end, minY, maxY), calculate(functionZ, begin, end, minZ, maxZ) };
     }
@@ -102,11 +102,9 @@ public class Calculator {
                 result = r.doubleValue();
             }
 
-            if(result == null) {
-
-                logger.error("Error of calculate", new NullPointerException("Result is null").getCause());
-            }
-            if((result >= min) && (result <= max)) ret.put(x, result);
+            if(result == null)
+                logger.error("Error of calculate", new NullPointerException("Result calculate is null").getCause());
+            else if((result >= min) && (result <= max)) ret.put(x, result);
         }
 
         logger.info("Finished calculate values map");

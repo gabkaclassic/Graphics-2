@@ -1,6 +1,10 @@
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.script.ScriptException;
 import javax.swing.*;
+import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
@@ -12,14 +16,16 @@ public class MainPanel extends JPanel {
 
     private boolean mode2D = true;
 
-    private List<JTextField> chars = new ArrayList<>();
-    private List<JTextField> limits = new ArrayList<>();
-    private List<JTextField> constants = new ArrayList<>();
-    private List<JTextField> functionsYList = new ArrayList<>();
-    private List<JLabel> functionsYLablesList = new ArrayList<>();
-    private List<JTextField> functionsZList = new ArrayList<>();
-    private List<JLabel> functionsZLablesList = new ArrayList<>();
-    private List<JLabel> calculateValuesList = new ArrayList<>();
+    private final List<JTextField> chars = new ArrayList<>();
+    private final List<JTextField> limits = new ArrayList<>();
+    private final List<JTextField> constants = new ArrayList<>();
+    private final List<JTextField> functionsYList = new ArrayList<>();
+    private final List<JLabel> functionsYLablesList = new ArrayList<>();
+    private final List<JTextField> functionsZList = new ArrayList<>();
+    private final List<JLabel> functionsZLablesList = new ArrayList<>();
+    private final List<JLabel> calculateValuesList = new ArrayList<>();
+
+    private static final Logger logger = LoggerFactory.getLogger(MainPanel.class);
 
     MainPanel() {
 
@@ -105,6 +111,8 @@ public class MainPanel extends JPanel {
         calculateButton.setVisible(true);
         calculateButton.addActionListener(actionEvent -> {
 
+            logger.info("Calculate value");
+
             for(int i = 0; i < functionsYList.size(); i++) {
 
                 double x = Double.parseDouble(calculateField.getText());
@@ -116,7 +124,7 @@ public class MainPanel extends JPanel {
                     y = PaintPanel.calculate(functionsYList.get(i).getText(), x);
                     if(!mode2D) z = PaintPanel.calculate(functionsZList.get(i).getText(), x);
                 }
-                catch (ScriptException e) { e.printStackTrace(); }
+                catch (ScriptException e) { logger.error("Calculator script error", e); }
 
                 calculateValuesList.get(i).setText("Y(" + x + ")= " + String.format(Locale.US, "%.2f", y) + "; Z(" + x + ")= " + String.format( Locale.US, "%.2f", z));
             }
@@ -172,7 +180,9 @@ public class MainPanel extends JPanel {
             PaintPanel panel;
             Map<String, Double> consts = new HashMap<>();
 
-            constants.stream().forEach(f -> {
+            logger.info("Creating graphics");
+
+            constants.forEach(f -> {
 
                 String[] in = f.getText().split("=");
                 if(in.length > 1) consts.put(in[0], Double.parseDouble(in[1]));
@@ -180,16 +190,16 @@ public class MainPanel extends JPanel {
 
             if(mode2D) panel = new PaintPanel(consts,
                     limits.stream().map(f -> Double.parseDouble(f.getText())).collect(Collectors.toList()),
-                    chars.stream().map(f -> f.getText()).collect(Collectors.toList()),
+                    chars.stream().map(JTextComponent::getText).collect(Collectors.toList()),
                     Double.parseDouble(stepField.getText()),
-                    functionsYList.stream().map(f -> f.getText()).collect(Collectors.toList())
+                    functionsYList.stream().map(JTextComponent::getText).collect(Collectors.toList())
             );
             else panel = new PaintPanel(consts,
                     limits.stream().map(f -> Double.parseDouble(f.getText())).collect(Collectors.toList()),
-                    chars.stream().map(f -> f.getText()).collect(Collectors.toList()),
+                    chars.stream().map(JTextComponent::getText).collect(Collectors.toList()),
                     Double.parseDouble(stepField.getText()),
-                    functionsYList.stream().map(f -> f.getText()).collect(Collectors.toList()),
-                    functionsZList.stream().map(f -> f.getText()).collect(Collectors.toList())
+                    functionsYList.stream().map(JTextComponent::getText).collect(Collectors.toList()),
+                    functionsZList.stream().map(JTextComponent::getText).collect(Collectors.toList())
             );
 
             new Frame(panel);
@@ -201,6 +211,8 @@ public class MainPanel extends JPanel {
         JButton changeModeButton = new JButton("3D");
         changeModeButton.setBounds(400, 0, 50, 50);
         changeModeButton.addActionListener(actionEvent -> {
+
+            logger.info("Change mode");
 
             mode2D = !mode2D;
 
@@ -235,7 +247,11 @@ public class MainPanel extends JPanel {
         JButton instructionButton = new JButton("Info");
         instructionButton.setVisible(true);
         instructionButton.setBounds(610, 300, 70, 20);
-        instructionButton.addActionListener(actionEvent -> JOptionPane.showMessageDialog(null, "Функции и знаки: \n" +
+        instructionButton.addActionListener(actionEvent -> {
+
+            logger.info("View instruction");
+
+            JOptionPane.showMessageDialog(null, "Функции и знаки: \n" +
                 "+ - сложение" + "\n" +
                 "- - вычитание" + "\n" +
                 "* - умножение" + "\n" +
@@ -259,7 +275,8 @@ public class MainPanel extends JPanel {
                 "Константы:" + "\n" +
                 "P - число 'Пи' " + "\n" +
                 "E - экспонента" + "\n" +
-                "Наименования собственных констант должны начинаться с большой буквы" + "\n"));
+                "Наименования собственных констант должны начинаться с большой буквы" + "\n");
+        });
         add(instructionButton);
 
         for(int i = 0; i < 5; i++) {
