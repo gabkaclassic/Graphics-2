@@ -92,6 +92,33 @@ public class MainPanel extends JPanel {
         });
         add(minusFunctionButton);
 
+        JButton derivativeButton = new JButton("dY/dX");
+        derivativeButton.setBounds(95, 0, 75, 35);
+        derivativeButton.addActionListener(actionEvent -> {
+
+            functionsYList.forEach(f -> {
+                try {
+                    f.setText(Calculator.derivativeFunction(f.getText()));
+                } catch (ScriptException e) {
+
+                    logger.error("Error in derivative function ", e);
+                }
+            });
+
+            if(!mode2D) functionsZList.forEach(f -> {
+
+                try {
+
+                    f.setText(Calculator.derivativeFunction(f.getText()));
+                }
+                catch (ScriptException e) {
+
+                    logger.error("Error in derivative function ", e);
+                }
+            });
+        });
+        add(derivativeButton);
+
         JTextField stepField = new JTextField("0.1");
         JLabel stepLabel = new JLabel("Step:");
 

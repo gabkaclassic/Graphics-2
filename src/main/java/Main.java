@@ -7,14 +7,17 @@ public class Main {
 
     private Main(){}
 
-    public static void main(String[] args) { new Main().start(); }
+    public static void main(String[] args) {
+
+        new Main().start();
+    }
 
     private void start() {
 
-        logger.info("PROGRAM START");
+        logger.warn("PROGRAM START");
 
         new Frame();
 
-        logger.info("PROGRAM FINISH");
+        logger.warn("PROGRAM FINISH");
     }
 }
