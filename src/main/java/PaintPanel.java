@@ -1,5 +1,4 @@
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.script.ScriptException;
 import javax.swing.*;
@@ -9,6 +8,7 @@ import java.awt.event.MouseMotionAdapter;
 import java.util.*;
 import java.util.List;
 
+@Slf4j
 public class PaintPanel extends JPanel {
 
     private static final int OX_2D = 400;
@@ -48,8 +48,7 @@ public class PaintPanel extends JPanel {
     private List<Map<Double, Double>> pointsZ;
 
     private static final Calculator calculator = new Calculator();
-    private static final Logger logger = LoggerFactory.getLogger(PaintPanel.class);
-
+    
     @SafeVarargs
     public PaintPanel(Map<String, Double> constants, List<Double> limits, List<String> chars, double step, List<String>...functions) {
 
@@ -184,8 +183,6 @@ public class PaintPanel extends JPanel {
                         OZ_3D * 2);
             }
 
-            /////////////////////////
-
             for (int i = 0; i < pointsY.size(); i++) {
 
                 gr.setColor(colors[i]);
@@ -240,7 +237,7 @@ public class PaintPanel extends JPanel {
                     double y = Double.NaN;
 
                     try { y = calculate(functionsY.get(i), currentX); }
-                    catch (ScriptException e) { logger.error("Calculator script error", e); }
+                    catch (ScriptException e) { log.error("Calculator script error", e); }
 
                     gr.drawString(("Y= " + String.format(Locale.US, "%.2f", y)), 0, 670 + (30 * i));
                 }
@@ -253,11 +250,10 @@ public class PaintPanel extends JPanel {
         if(functionsZ == null) {
 
             try {
-
-            for(int i = 0; i < functionsY.size(); i++)
-                pointsY.add(calculator.calculate2D(minX, maxX, minY, maxY, functionsY.get(i)));
+    
+                for(String s : functionsY) pointsY.add(calculator.calculate2D(minX, maxX, minY, maxY, s));
             }
-            catch(ScriptException e) { logger.error("Calculator script error", e); }
+            catch(ScriptException e) { log.error("Calculator script error", e); }
 
         }
         else {
@@ -268,12 +264,12 @@ public class PaintPanel extends JPanel {
 
                     for (int i = 0; i < functionsY.size(); i++) {
 
-                            Map[] arr = calculator.calculate3D(minX, maxX, minY, maxY, minZ, maxZ, functionsY.get(i), functionsZ.get(i));
+                            Map<Double, Double>[] arr = calculator.calculate3D(minX, maxX, minY, maxY, minZ, maxZ, functionsY.get(i), functionsZ.get(i));
                             pointsY.add(arr[0]);
                             pointsZ.add(arr[1]);
                         }
                     }
-                    catch (ScriptException e) { logger.error("Calculator script error", e); }
+                    catch (ScriptException e) { log.error("Calculator script error", e); }
             }
     }
 

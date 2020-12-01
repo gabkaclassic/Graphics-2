@@ -1,15 +1,14 @@
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.script.ScriptException;
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class MainPanel extends JPanel {
 
     private static final int MAX_COUNT_FUNCTIONS = 5;
@@ -24,9 +23,7 @@ public class MainPanel extends JPanel {
     private final List<JTextField> functionsZList = new ArrayList<>();
     private final List<JLabel> functionsZLablesList = new ArrayList<>();
     private final List<JLabel> calculateValuesList = new ArrayList<>();
-
-    private static final Logger logger = LoggerFactory.getLogger(MainPanel.class);
-
+    
     MainPanel() {
 
         setLayout(null);
@@ -101,7 +98,7 @@ public class MainPanel extends JPanel {
                     f.setText(Calculator.derivativeFunction(f.getText()));
                 } catch (ScriptException e) {
 
-                    logger.error("Error in derivative function ", e);
+                    log.error("Error in derivative function ", e);
                 }
             });
 
@@ -113,7 +110,7 @@ public class MainPanel extends JPanel {
                 }
                 catch (ScriptException e) {
 
-                    logger.error("Error in derivative function ", e);
+                    log.error("Error in derivative function ", e);
                 }
             });
         });
@@ -138,7 +135,7 @@ public class MainPanel extends JPanel {
         calculateButton.setVisible(true);
         calculateButton.addActionListener(actionEvent -> {
 
-            logger.info("Calculate value");
+            log.info("Calculate value");
 
             for(int i = 0; i < functionsYList.size(); i++) {
 
@@ -151,7 +148,7 @@ public class MainPanel extends JPanel {
                     y = PaintPanel.calculate(functionsYList.get(i).getText(), x);
                     if(!mode2D) z = PaintPanel.calculate(functionsZList.get(i).getText(), x);
                 }
-                catch (ScriptException e) { logger.error("Calculator script error", e); }
+                catch (ScriptException e) { log.error("Calculator script error", e); }
 
                 calculateValuesList.get(i).setText("Y(" + x + ")= " + String.format(Locale.US, "%.2f", y) + "; Z(" + x + ")= " + String.format( Locale.US, "%.2f", z));
             }
@@ -207,7 +204,7 @@ public class MainPanel extends JPanel {
             PaintPanel panel;
             Map<String, Double> consts = new HashMap<>();
 
-            logger.info("Creating graphics");
+            log.info("Creating graphics");
 
             constants.forEach(f -> {
 
@@ -239,7 +236,7 @@ public class MainPanel extends JPanel {
         changeModeButton.setBounds(400, 0, 50, 50);
         changeModeButton.addActionListener(actionEvent -> {
 
-            logger.info("Change mode");
+            log.info("Change mode");
 
             mode2D = !mode2D;
 
@@ -276,7 +273,7 @@ public class MainPanel extends JPanel {
         instructionButton.setBounds(610, 300, 70, 20);
         instructionButton.addActionListener(actionEvent -> {
 
-            logger.info("View instruction");
+            log.info("View instruction");
 
             JOptionPane.showMessageDialog(null, "Функции и знаки: \n" +
                 "+ - сложение" + "\n" +
@@ -299,6 +296,7 @@ public class MainPanel extends JPanel {
                 "abs(a) - модуль выражения 'a'" + "\n" +
                 "sqrt(a) - квадратный корень из выражения 'a'" + "\n" +
                 "log(a) - натуральный логарифм выражения 'a'" + "\n"  +
+                 "log(a, b) - логарифм числа 'b' по основанию 'a'" + "\n"  +
                 "Константы:" + "\n" +
                 "P - число 'Пи' " + "\n" +
                 "E - экспонента" + "\n" +

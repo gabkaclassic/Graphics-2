@@ -1,19 +1,18 @@
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import java.util.*;
 
+@Slf4j
 public class Calculator {
 
     private static double step = 0.1;
 
     private static final ScriptEngine calculator = new ScriptEngineManager().getEngineByName("javascript");
-    private static final Logger logger = LoggerFactory.getLogger(Calculator.class);
-
+    
     private static String valX = "x";
 
     private static Map<String, Double> constants;
@@ -25,17 +24,11 @@ public class Calculator {
         prepareCalculator();
     }
 
-//    public Calculator(ScriptEngine calc) {
-//
-//        this();
-//        calculator = calc;
-//    }
-
     public static double calculate(String function, double x) throws ScriptException {
 
         if(function == null) {
 
-            logger.error("Method calculate", new NullPointerException("String of function is null"));
+            log.error("Method calculate", new NullPointerException("String of function is null"));
         }
 
         function = prepare(function, x);
@@ -49,7 +42,7 @@ public class Calculator {
 
         if(!constants.equals(consts)) {
 
-            logger.info("Be changed constants map");
+            log.info("Be changed constants map");
             constants = consts;
         }
     }
@@ -58,7 +51,7 @@ public class Calculator {
 
         if(step != s) {
 
-            logger.info("The argument step was changed from " + step + " to " + s);
+            log.info("The argument step was changed from " + step + " to " + s);
             step = s;
         }
     }
@@ -67,14 +60,14 @@ public class Calculator {
 
         if(!valX.equals(xValue)) {
 
-            logger.info("Be changed x value");
+            log.info("Be changed x value");
             valX = xValue;
         }
     }
 
     public Map<Double, Double> calculate2D(double begin, double end, double minY, double maxY, String function) throws ScriptException { return calculate(function, begin, end, minY, maxY); }
 
-    public Map[] calculate3D(double begin, double end, double minY, double maxY, double minZ, double maxZ, String functionY, String functionZ) throws ScriptException {
+    public Map<Double, Double>[] calculate3D(double begin, double end, double minY, double maxY, double minZ, double maxZ, String functionY, String functionZ) throws ScriptException {
 
         return new Map[]{ calculate(functionY, begin, end, minY, maxY), calculate(functionZ, begin, end, minZ, maxZ) };
     }
@@ -83,7 +76,7 @@ public class Calculator {
 
         Map<Double, Double> ret = new LinkedHashMap<>();
 
-        logger.info("Started calculate map values");
+        log.info("Started calculate map values");
 
         for(double x = begin; x <= end; x += step) {
 
@@ -94,18 +87,18 @@ public class Calculator {
             try { result = (Double) (calculator.eval(prepareFunction)); }
             catch (Exception e){
 
-                logger.error("Error of calculate", e);
+                log.error("Error of calculate", e);
 
                 Integer r = (Integer) calculator.eval(prepareFunction);
                 result = r.doubleValue();
             }
 
             if(result == null)
-                logger.error("Error of calculate", new NullPointerException("Result calculate is null").getCause());
+                log.error("Error of calculate", new NullPointerException("Result calculate is null").getCause());
             else if((result >= min) && (result <= max)) ret.put(x, result);
         }
 
-        logger.info("Finished calculate values map");
+        log.info("Finished calculate values map");
 
         return ret;
     }
@@ -124,7 +117,7 @@ public class Calculator {
 
         if((function == null) || (function.isEmpty())) {
 
-            logger.warn("String from derivative is null or empty");
+            log.warn("String from derivative is null or empty");
             throw new NullPointerException("String from derivative is null or empty");
         }
 
@@ -484,7 +477,7 @@ public class Calculator {
 
         if(c > 0) {
 
-            logger.warn("Incorrectly placed brackets");
+            log.warn("Incorrectly placed brackets");
             throw new IllegalArgumentException("Incorrectly placed brackets");
         }
     }
@@ -493,7 +486,7 @@ public class Calculator {
 
         try {
 
-            logger.info("Start load functions");
+            log.info("Start load functions");
 
             for (String function : new String[]{"sin", "cos", "tan", "abs", "sqrt", "acos", "asin", "atan", "log", "toRadians", "toDegrees", "ceil", "floor", "round"})
                 calculator.eval("function " + function + "(x) { return Java.type('java.lang.Math')." + function + "(x); }");
@@ -501,7 +494,8 @@ public class Calculator {
             calculator.eval("function ctg(x) { return 1 / Java.type('java.lang.Math')." + "tan" + "(x); }");
             calculator.eval("function actg(x) { return 1 / Java.type('java.lang.Math')." + "atan" + "(x); }");
             calculator.eval("function pow(x, y) { return Java.type('java.lang.Math').pow(x, y); }");
+            calculator.eval("function log(x, y) { return Java.type('java.lang.Math').log(y) / Java.type('java.lang.Math').log(x); }");
         }
-        catch (ScriptException e) { logger.error("Error of load functions in calculator {}", e); }
+        catch (ScriptException e) { log.error("Error of load functions in calculator {}", e); }
     }
 }
