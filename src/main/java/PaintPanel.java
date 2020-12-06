@@ -95,7 +95,10 @@ public class PaintPanel extends JPanel {
         prepareFromRepaint();
     }
 
-    public static double calculate(String function, double x) throws ScriptException { return  Calculator.calculate(function, x); }
+    public static double calculate(String function, double x) throws ScriptException {
+        
+        return  Calculator.calculate(function, x);
+    }
 
     public void paintComponent(Graphics g) {
 
@@ -104,156 +107,196 @@ public class PaintPanel extends JPanel {
         Graphics2D gr = (Graphics2D)g;
 
         super.paintComponent(gr);
-
-            if(functionsZ == null) {
-
-                gr.setColor(Color.BLACK);
-                gr.setFont(new Font("TimesRoman", Font.BOLD, 15));
-
-                gr.drawString(symbolX, (OX_2D * 2 - 15), (OY_2D + 15));
-
-                gr.drawLine((OX_2D - 1), 0, (OX_2D - 1), OY_2D * 2);
-                gr.drawLine(OX_2D, 0, OX_2D, OY_2D * 2);
-                gr.drawLine((OX_2D + 1), 0, (OX_2D + 1), OY_2D * 2);
-
-                for (int i = 0; i < (OX_2D * 2); i += stepX) gr.drawLine(i, 0, i, (OY_2D * 2));
-
-                gr.setColor(Color.GRAY);
-
-                gr.drawString(symbolY, (OX_2D + 15), 15);
-
-                gr.drawLine(0, (OY_2D - 1), OX_2D * 2, (OY_2D - 1));
-                gr.drawLine(0, OY_2D, OX_2D * 2, OY_2D);
-                gr.drawLine(0, (OY_2D + 1), OX_2D * 2, (OY_2D + 1));
-                for (int i = 0; i < (OY_2D * 2); i += stepY) gr.drawLine(0, i, (OX_2D * 5), i);
-            }
-            else {
-
-                gr.setColor(Color.BLACK);
-                gr.setFont(new Font("TimesRoman", Font.BOLD, 15));
-
-                gr.drawString(symbolX, (int)(OX_3D + (OX_3D * 2 * Math.cos(Math.toRadians(DEGREE_A + 10))) - 300),
-                        (int)(OY_3D + (OX_3D * 2 * Math.sin(Math.toRadians(DEGREE_A + 10)))) - 270);
-
-                gr.drawLine((int)(OX_3D - (OX_3D * 2 * cosA)),
-                        (int)(OY_3D - (OX_3D * 2 * sinA) - 1),
-                        (int)(OX_3D + (OX_3D * 2 * cosA)),
-                        (int)(OY_3D + (OX_3D * 2 * sinA)) - 1);
-                gr.drawLine((int)(OX_3D - (OX_3D * 2 * cosA)),
-                        (int)(OY_3D - (OX_3D * 2 * sinA)),
-                        (int)(OX_3D + (OX_3D * 2 * cosA)),
-                        (int)(OY_3D + (OX_3D * 2 * sinA)));
-                gr.drawLine((int)(OX_3D - (OX_3D * 2 * cosA)),
-                        (int)(OY_3D - (OX_3D * 2 * sinA) + 1),
-                        (int)(OX_3D + (OX_3D * 2 * cosA)),
-                        (int)(OY_3D + (OX_3D * 2 * sinA)) + 1);
-
-                gr.setColor(Color.GRAY);
-
-                gr.drawString(symbolY, 590, 20);  //КОСТЫЛЬ!!!
-
-                gr.drawLine((int)(OX_3D - (OY_2D * 2 * sinB) - 1),
-                        (int)(OY_3D + (OY_2D * 2 * cosB)),
-                        (int)(OX_3D + (OY_2D * 2 * sinB) - 1),
-                        (int)(OY_3D - (OY_2D * 2 * cosB)));
-                gr.drawLine((int)(OX_3D - (OY_2D * 2 * sinB)),
-                        (int)(OY_3D + (OY_2D * 2 * cosB)),
-                        (int)(OX_3D + (OY_2D * 2 * sinB)),
-                        (int)(OY_3D - (OY_2D * 2 * cosB)));
-                gr.drawLine((int)(OX_3D - (OY_2D * 2 * sinB) + 1),
-                        (int)(OY_3D + (OY_2D * 2 * cosB)),
-                        (int)(OX_3D + (OY_2D * 2 * sinB) + 1),
-                        (int)(OY_3D - (OY_2D * 2 * cosB)));
-
-                gr.setColor(new Color(65, 25, 0));
-
-                gr.drawString(symbolZ, (int)(OX_3D - (OZ_3D * 2 * sinY) + 10), 20);
-
-                gr.drawLine((int)(OX_3D - (OZ_3D * 2 * sinY) - 1),
-                        0,
-                        (int)(OX_3D + (OZ_3D * 2 * sinY - 1)),
-                        OZ_3D * 2);
-                gr.drawLine((int)(OX_3D - (OZ_3D * 2 * sinY) - 1),
-                        0,
-                        (int)(OX_3D + (OZ_3D * 2 * sinY - 1)),
-                        OZ_3D * 2);
-                gr.drawLine((int)(OX_3D - (OZ_3D * 2 * sinY) - 1),
-                        0,
-                        (int)(OX_3D + (OZ_3D * 2 * sinY - 1)),
-                        OZ_3D * 2);
-            }
-
-            for (int i = 0; i < pointsY.size(); i++) {
-
-                gr.setColor(colors[i]);
-
-                gr.setFont(new Font("TimesRoman", Font.BOLD, 15));
-                gr.drawString(("Function " + i), (OX_2D * 2 - 100), OY_2D * 2 - 200 + (i * 20));
-
-                if (pointsZ == null) {
-
-                    Double[] arrX = new Double[0];
-                    Double[] arrY = new Double[0];
-
-                    arrX = pointsY.get(i).keySet().toArray(arrX);
-                    arrY = pointsY.get(i).values().toArray(arrY);
-
-                    for (int j = 0; j < (arrX.length - 1); j++)
-                        gr.drawLine((int) (OX_2D + arrX[j] * stepX), (int) (OY_2D - arrY[j] * stepY),
-                                (int) (OX_2D + arrX[j + 1] * stepX), (int) (OY_2D - arrY[j + 1] * stepY));
-                } else {
-
-                    Double[] arrX = new Double[0];
-                    Double[] arrY = new Double[0];
-
-                    Double[] arrZ = new Double[0];
-
-                    arrX = pointsY.get(i).keySet().toArray(arrX);
-                    arrY = pointsY.get(i).values().toArray(arrY);
-                    arrZ = pointsZ.get(i).values().toArray(arrZ);
-
-                    for (int j = 0; j < (arrX.length - 1)
-                            && j < (arrY.length - 1)
-                            && j < (arrZ.length - 1); j++) {
-
-                        gr.drawLine((int) (OX_3D + (stepX * arrX[j] * cosA + stepY * arrY[j] * sinB)),
-                                (int) (OY_3D + (stepX * arrX[j] * sinA - stepY * arrY[j] * cosB - stepZ * arrZ[j] * cosY)),
-                                (int) (OX_3D + (stepX * arrX[j + 1] * cosA + stepY * arrY[j + 1] * sinB)),
-                                (int) (OY_3D + (stepX * arrX[j + 1] * sinA - stepY * arrY[j + 1] * cosB - stepZ * arrZ[j + 1] * cosY)));
-                    }
-                }
-            }
-
-            if(functionsZ == null) {
-                gr.clearRect(0, 630, 70, 150);
-
-                gr.setColor(Color.BLACK);
-                gr.drawString(("X=" + currentX), 0, 650);
-
-                for (int i = 0; i < functionsY.size(); i++) {
-
-                    gr.setColor(colors[i]);
-
-                    double y = Double.NaN;
-
-                    try { y = calculate(functionsY.get(i), currentX); }
-                    catch (ScriptException e) { log.error("Calculator script error", e); }
-
-                    gr.drawString(("Y= " + String.format(Locale.US, "%.2f", y)), 0, 670 + (30 * i));
-                }
-            }
+    
+        paintFunctionsTitles(gr);
+        
+        if(functionsZ == null) {
+    
+            paintAxis2D(gr);
+            paintGraphics2D(gr);
+            paintCurrentValues(gr);
+        }
+        else {
+    
+            paintAxis3D(gr);
+            paintGraphics3D(gr);
+        }
     }
 
+    private void paintAxis2D(Graphics2D gr) {
+    
+    
+        gr.setColor(Color.BLACK);
+        gr.setFont(new Font("TimesRoman", Font.BOLD, 15));
+    
+        gr.drawString(symbolX, (OX_2D * 2 - 15), (OY_2D + 15));
+    
+        gr.drawLine((OX_2D - 1), 0, (OX_2D - 1), OY_2D * 2);
+        gr.drawLine(OX_2D, 0, OX_2D, OY_2D * 2);
+        gr.drawLine((OX_2D + 1), 0, (OX_2D + 1), OY_2D * 2);
+    
+        for (int i = 0; i < (OX_2D * 2); i += stepX) gr.drawLine(i, 0, i, (OY_2D * 2));
+    
+        gr.setColor(Color.GRAY);
+    
+        gr.drawString(symbolY, (OX_2D + 15), 15);
+    
+        gr.drawLine(0, (OY_2D - 1), OX_2D * 2, (OY_2D - 1));
+        gr.drawLine(0, OY_2D, OX_2D * 2, OY_2D);
+        gr.drawLine(0, (OY_2D + 1), OX_2D * 2, (OY_2D + 1));
+        
+        for (int i = 0; i < (OY_2D * 2); i += stepY) gr.drawLine(0, i, (OX_2D * 5), i);
+    }
+    
+    private void paintAxis3D(Graphics2D gr) {
+    
+        gr.setColor(Color.BLACK);
+        gr.setFont(new Font("TimesRoman", Font.BOLD, 15));
+    
+        gr.drawString(symbolX, (int)(OX_3D + (OX_3D * 2 * Math.cos(Math.toRadians(DEGREE_A + 10))) - 300),
+                (int)(OY_3D + (OX_3D * 2 * Math.sin(Math.toRadians(DEGREE_A + 10)))) - 270);
+    
+        gr.drawLine((int)(OX_3D - (OX_3D * 2 * cosA)),
+                (int)(OY_3D - (OX_3D * 2 * sinA) - 1),
+                (int)(OX_3D + (OX_3D * 2 * cosA)),
+                (int)(OY_3D + (OX_3D * 2 * sinA)) - 1);
+        gr.drawLine((int)(OX_3D - (OX_3D * 2 * cosA)),
+                (int)(OY_3D - (OX_3D * 2 * sinA)),
+                (int)(OX_3D + (OX_3D * 2 * cosA)),
+                (int)(OY_3D + (OX_3D * 2 * sinA)));
+        gr.drawLine((int)(OX_3D - (OX_3D * 2 * cosA)),
+                (int)(OY_3D - (OX_3D * 2 * sinA) + 1),
+                (int)(OX_3D + (OX_3D * 2 * cosA)),
+                (int)(OY_3D + (OX_3D * 2 * sinA)) + 1);
+    
+        gr.setColor(Color.GRAY);
+    
+        gr.drawString(symbolY, 590, 20);  //КОСТЫЛЬ!!!
+    
+        gr.drawLine((int)(OX_3D - (OY_2D * 2 * sinB) - 1),
+                (int)(OY_3D + (OY_2D * 2 * cosB)),
+                (int)(OX_3D + (OY_2D * 2 * sinB) - 1),
+                (int)(OY_3D - (OY_2D * 2 * cosB)));
+        gr.drawLine((int)(OX_3D - (OY_2D * 2 * sinB)),
+                (int)(OY_3D + (OY_2D * 2 * cosB)),
+                (int)(OX_3D + (OY_2D * 2 * sinB)),
+                (int)(OY_3D - (OY_2D * 2 * cosB)));
+        gr.drawLine((int)(OX_3D - (OY_2D * 2 * sinB) + 1),
+                (int)(OY_3D + (OY_2D * 2 * cosB)),
+                (int)(OX_3D + (OY_2D * 2 * sinB) + 1),
+                (int)(OY_3D - (OY_2D * 2 * cosB)));
+    
+        gr.setColor(new Color(65, 25, 0));
+    
+        gr.drawString(symbolZ, (int)(OX_3D - (OZ_3D * 2 * sinY) + 10), 20);
+    
+        gr.drawLine((int)(OX_3D - (OZ_3D * 2 * sinY) - 1),
+                0,
+                (int)(OX_3D + (OZ_3D * 2 * sinY - 1)),
+                OZ_3D * 2);
+        gr.drawLine((int)(OX_3D - (OZ_3D * 2 * sinY) - 1),
+                0,
+                (int)(OX_3D + (OZ_3D * 2 * sinY - 1)),
+                OZ_3D * 2);
+        gr.drawLine((int)(OX_3D - (OZ_3D * 2 * sinY) - 1),
+                0,
+                (int)(OX_3D + (OZ_3D * 2 * sinY - 1)),
+                OZ_3D * 2);
+    }
+    
+    private void paintGraphics2D(Graphics2D gr) {
+        
+        int color = 0;
+        
+        for(Map<Double, Double> map: pointsY) {
+    
+            gr.setColor(colors[color++]);
+            
+            Double[] arrX = map.keySet().toArray(new Double[0]);
+            Double[] arrY = map.values().toArray(new Double[0]);
+    
+            for(int i = 0; i < arrX.length - 1 && i < arrY.length - 1; i++) {
+    
+                gr.drawLine((int) (OX_2D + arrX[i] * stepX), (int) (OY_2D - arrY[i] * stepY),
+                        (int) (OX_2D + arrX[i + 1] * stepX), (int) (OY_2D - arrY[i + 1] * stepY));
+            }
+        }
+    }
+    
+    private void paintGraphics3D(Graphics2D gr) {
+    
+        for(int index = 0; index < pointsY.size(); index++) {
+    
+            gr.setColor(colors[index]);
+            
+            Double[] arrX = pointsY.get(index).keySet().toArray(new Double[0]);
+            Double[] arrY = pointsY.get(index).values().toArray(new Double[0]);
+            Double[] arrZ = pointsZ.get(index).values().toArray(new Double[0]);
+    
+            for (int j = 0; j < (arrX.length - 1)
+                    && j < (arrY.length - 1)
+                    && j < (arrZ.length - 1); j++) {
+        
+                gr.drawLine((int) (OX_3D + (stepX * arrX[j] * cosA + stepY * arrY[j] * sinB)),
+                        (int) (OY_3D + (stepX * arrX[j] * sinA - stepY * arrY[j] * cosB - stepZ * arrZ[j] * cosY)),
+                        (int) (OX_3D + (stepX * arrX[j + 1] * cosA + stepY * arrY[j + 1] * sinB)),
+                        (int) (OY_3D + (stepX * arrX[j + 1] * sinA - stepY * arrY[j + 1] * cosB - stepZ * arrZ[j + 1] * cosY)));
+            }
+        }
+    }
+    
+    private void paintFunctionsTitles(Graphics2D gr) {
+        
+        for(int index = 0; index < pointsY.size(); index++) {
+    
+            gr.setColor(colors[index]);
+            gr.setFont(new Font("TimesRoman", Font.BOLD, 15));
+            gr.drawString(("Function " + index), (OX_2D * 2 - 100), OY_2D * 2 - 200 + (index * 20));
+        }
+    }
+    
+    private void paintCurrentValues(Graphics2D gr) {
+    
+        gr.clearRect(0, 630, 70, 150);
+    
+        gr.setColor(Color.BLACK);
+        gr.drawString(("X=" + currentX), 0, 650);
+    
+        for (int i = 0; i < functionsY.size(); i++) {
+        
+            gr.setColor(colors[i]);
+        
+            double y = Double.NaN;
+        
+            try {
+                
+                y = calculate(functionsY.get(i), currentX);
+            }
+            catch (ScriptException e) {
+                
+                log.error("Calculator script error", e);
+            }
+        
+            gr.drawString(("Y= " + String.format(Locale.US, "%.2f", y)), 0, 670 + (30 * i));
+        
+        }
+    }
+    
     private void prepareFromRepaint() {
 
         pointsY = new ArrayList<>();
+        
         if(functionsZ == null) {
 
             try {
     
-                for(String s : functionsY) pointsY.add(calculator.calculate2D(minX, maxX, minY, maxY, s));
+                for(String s : functionsY)
+                    pointsY.add(calculator.calculate2D(minX, maxX, minY, maxY, s));
             }
-            catch(ScriptException e) { log.error("Calculator script error", e); }
+            catch(ScriptException e) {
+                
+                log.error("Calculator script error", e);
+            }
 
         }
         else {
@@ -269,7 +312,10 @@ public class PaintPanel extends JPanel {
                             pointsZ.add(arr[1]);
                         }
                     }
-                    catch (ScriptException e) { log.error("Calculator script error", e); }
+                    catch (ScriptException e) {
+                    
+                    log.error("Calculator script error", e);
+                }
             }
     }
 
